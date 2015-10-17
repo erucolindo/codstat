@@ -1,0 +1,287 @@
+<h2><%= pretty_name(@player[:name]) %></h2>
+
+<div class="rbox">
+<div class="row">
+<div class="three columns"><b>Kills:</b> <%= @player[:kills] %></div>
+<div class="three columns"><b>Deaths:</b> <%= @player[:deaths] %></div>
+<div class="three columns"><b>K/D:</b> <%= @player[:kd].round(2) %></div>
+<div class="three columns"><b>Headshots:</b> <%= @player[:headshots].to_i %>%</div>
+</div>
+
+<div class="row">
+<div class="three columns"><b>Kills in FFA:</b> <%= @player[:kill_per_team][""] %></div>
+<div class="three columns"><b>Kills as Allies:</b> <%= @player[:kill_per_team]["allies"] %></div>
+<div class="three columns"><b>Kills as Axis:</b> <%= @player[:kill_per_team]["axis"] %></div>
+<div class="three columns"><b>Longest KS:</b> <%= @player[:longest_killstreak] %></div>
+</div>
+
+<div class="row">
+<div class="three columns"><b>Melee Kills:</b> <%= @player[:melee_kills] %></div>
+<div class="three columns"><b>Melee Deaths:</b> <%= @player[:melee_deaths] %></div>
+<div class="three columns"><b>Grenade Kills:</b> <%= @player[:grenade_kills] %></div>
+<div class="three columns"><b>Grenade Deaths:</b> <%= @player[:grenade_deaths] %></div>
+</div>
+
+<div class="row">
+<div class="three columns"><b>Longest Range:</b> <%= @player[:longest_range] %> m</div>
+<div class="three columns"><b>Average Range:</b> <%= @player[:average_range] %> m</div>
+<div class="three columns"><b>Teamkills:</b> <%= @player[:teamkills] %></div>
+<div class="three columns"><b>Teamkilled:</b> <%= @player[:teamkilled] %></div>
+</div>
+
+<div class="row">
+<div class="three columns"><b>R/L Hit Bias:</b> <%= @player[:hit_bias] %></div>
+<div class="three columns"><b>Names:</b> <%= @player[:name_changes] %></div>
+</div>
+</div>
+<br/>
+
+<% if @player[:killstreaks].length > 0 %>
+<div class="row">
+<div class="one-half column rbox">
+<h4>Killstreaks</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Amount</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killstreaks].each do |k| %>
+		<tr>
+			<td><%= k[0] %></td>
+			<td><%= k[1] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>
+<br/>
+<% end %>
+
+<div class="row">
+<div class="four columns rbox">
+<h4>Killed</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Kills</th>
+			<th>%</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed].each do |kill| %>
+		<tr>
+			<td><%= pretty_name(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= number_to_percentage(kill[:percentage], precision: 0) %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+<div class="four columns rbox">
+<h4>Matchups</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>KD</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:matchups].each do |kill| %>
+		<tr>
+			<td><%= pretty_name(kill[:name]) %></td>
+			<td><%= number_with_precision(kill[:kd], precision: 2)  %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+
+<div class="four columns rbox">
+<h4>Killed by</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Deaths</th>
+			<th>%</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_by].each do |kill| %>
+		<tr>
+			<td><%= pretty_name(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= number_to_percentage(kill[:percentage], precision: 0) %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>
+<br/>
+
+<div class="row">
+<div class="one-half column rbox">
+<h4>Kills with guntype</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Kills</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_with_guntype].each do |kill| %>
+		<tr>
+			<td><%= pretty_gun(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+<div class="one-half column rbox">
+<h4>Killed by guntype</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Deaths</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_by_guntype].each do |kill| %>
+		<tr>
+			<td><%= pretty_gun(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>
+<br/>
+
+<div class="row">
+<div class="one-half column rbox">
+<h4>Kills with gun</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Weapon</th>
+			<th>Kills</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_with_gun].each do |kill| %>
+		<tr>
+			<td><%= pretty_gun(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+<div class="one-half column rbox">
+<h4>Killed by gun</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Weapon</th>
+			<th>Deaths</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_by_gun].each do |kill| %>
+		<tr>
+			<td><%= pretty_gun(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>
+<br/>
+
+<div class="row">
+<div class="one-half column rbox">
+<h4>Kills with damage</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Damage</th>
+			<th>Kills</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_with_damage].each do |kill| %>
+		<tr>
+			<td><%= pretty_location(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+<div class="one-half column rbox">
+<h4>Killed by damage</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Damage</th>
+			<th>Deaths</th>
+			<th>%</th>
+			<th>Div</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @player[:killed_by_damage].each do |kill| %>
+		<tr>
+			<td><%= pretty_location(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+			<td><%= kill[:divergence] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>

@@ -1,0 +1,49 @@
+<h2><%= pretty_gun(params[:id]) %></h2>
+
+<div class="row">
+<div class="one-half column rbox">
+<h4>Kills</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Kills</th>
+			<th>%</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @players[:kills].each do |kill| %>
+		<tr>
+			<td><%= pretty_name(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+<div class="one-half column rbox">
+<h4>Deaths</h4>
+<table class="u-full-width">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Deaths</th>
+			<th>%</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @players[:deaths].each do |kill| %>
+		<tr>
+			<td><%= pretty_name(kill[:name]) %></td>
+			<td><%= kill[:kills] %></td>
+			<td><%= kill[:percentage] %>%</td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+</div>
+</div>
+

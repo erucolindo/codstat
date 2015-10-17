@@ -1,0 +1,45 @@
+<h2>Last 1000 Kills</h2>
+
+<table>
+	<thead>
+		<tr>
+			<th>target_guid</th>
+			<th>target_id</th>
+			<th>target_team</th>
+			<th>target_name</th>
+			<th>attacker_guid</th>
+			<th>attacker_id</th>
+			<th>attacker_team</th>
+			<th>attacker_name</th>
+			<th>weapon</th>
+			<th>damage</th>
+			<th>damage_type</th>
+			<th>damage_location</th>
+			<th>range</th>
+			<th>target_killstreak</th>
+			<th>attacker_killstreak</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @kills.each do |kill| %>
+		<tr>
+			<td><%= kill.target_guid %></td>
+			<td><%= kill.target_id %></td>
+			<td><%= kill.target_team %></td>
+			<td><%= kill.target_name %></td>
+			<td><%= kill.attacker_guid %></td>
+			<td><%= kill.attacker_id %></td>
+			<td><%= kill.attacker_team %></td>
+			<td><%= kill.attacker_name %></td>
+			<td><%= kill.weapon %></td>
+			<td><%= kill.damage %></td>
+			<td><%= kill.damage_type %></td>
+			<td><%= kill.damage_location %></td>
+			<td><%= kill.range %></td>
+			<td><%= kill.target_killstreak %></td>
+			<td><%= kill.attacker_killstreak %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>

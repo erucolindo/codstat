@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= if @title then pretty_name(pretty_gun(@title)) else "COD2 Stats" end %></title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <%= link_to "Scorebord", {controller: "kills", action: "index"}, class: "button" %>
+      <%= link_to "Weapons", {controller: "kills", action: "weapons"}, class: "button" %>
+      <%= link_to "Raw", {controller: "kills", action: "raw"}, class: "button" %>
+      <%= link_to "Export", "/export.csv", :class => "button" %>
+    </div>
+<%= yield %>
+  </div>
+</body>
+</html>

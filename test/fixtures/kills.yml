@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  target_guid: 1
+  target_id: 1
+  target_team: MyString
+  target_name: MyString
+  attacker_guid: 1
+  attacker_id: 1
+  attacker_team: MyString
+  attacker_name: MyString
+  weapon: MyString
+  damage: 1
+  damage_type: MyString
+  damage_location: MyString
+
+two:
+  target_guid: 1
+  target_id: 1
+  target_team: MyString
+  target_name: MyString
+  attacker_guid: 1
+  attacker_id: 1
+  attacker_team: MyString
+  attacker_name: MyString
+  weapon: MyString
+  damage: 1
+  damage_type: MyString
+  damage_location: MyString
