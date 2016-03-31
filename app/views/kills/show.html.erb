@@ -1,4 +1,4 @@
-<h2><%= pretty_name(@player[:name]) %></h2>
+<h2><span title="<%= @player[:name_changes].collect{ |n| pretty_name(n) }.join("\n") %>"><%= pretty_name(@player[:name]) %></span></h2>
 
 <div class="rbox">
 <div class="row">
@@ -9,58 +9,34 @@
 </div>
 
 <div class="row">
-<div class="three columns"><b>Kills in FFA:</b> <%= @player[:kill_per_team][""] %></div>
-<div class="three columns"><b>Kills as Allies:</b> <%= @player[:kill_per_team]["allies"] %></div>
-<div class="three columns"><b>Kills as Axis:</b> <%= @player[:kill_per_team]["axis"] %></div>
-<div class="three columns"><b>Longest KS:</b> <%= @player[:longest_killstreak] %></div>
-</div>
-
-<div class="row">
-<div class="three columns"><b>Melee Kills:</b> <%= @player[:melee_kills] %></div>
-<div class="three columns"><b>Melee Deaths:</b> <%= @player[:melee_deaths] %></div>
-<div class="three columns"><b>Grenade Kills:</b> <%= @player[:grenade_kills] %></div>
-<div class="three columns"><b>Grenade Deaths:</b> <%= @player[:grenade_deaths] %></div>
-</div>
-
-<div class="row">
 <div class="three columns"><b>Longest Range:</b> <%= @player[:longest_range] %> m</div>
 <div class="three columns"><b>Average Range:</b> <%= @player[:average_range] %> m</div>
-<div class="three columns"><b>Teamkills:</b> <%= @player[:teamkills] %></div>
-<div class="three columns"><b>Teamkilled:</b> <%= @player[:teamkilled] %></div>
-</div>
-
-<div class="row">
 <div class="three columns"><b>R/L Hit Bias:</b> <%= @player[:hit_bias] %></div>
-<div class="three columns"><b>Names:</b> <%= @player[:name_changes] %></div>
+<div class="three columns"><b>Longest KS:</b> <span title="<%= @player[:killstreaks].collect{ |k, v| k + ": " + v.to_s }.join("\n") %>"><%= @player[:longest_killstreak] %></span></div>
 </div>
 </div>
 <br/>
 
-<% if @player[:killstreaks].length > 0 %>
+<div class="rbox">
+<h4>Kills</h4>
 <div class="row">
-<div class="one-half column rbox">
-<h4>Killstreaks</h4>
-<table class="u-full-width">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Amount</th>
-		</tr>
-	</thead>
-
-	<tbody>
-		<% @player[:killstreaks].each do |k| %>
-		<tr>
-			<td><%= k[0] %></td>
-			<td><%= k[1] %></td>
-		</tr>
-		<% end %>
-	</tbody>
-</table>
+<div class="six columns"><%= pie_chart [["Kills in FFA", @player[:kill_per_team][""]], ["Kills as Allies", @player[:kill_per_team]["allies"]], ["Kills as Axis", @player[:kill_per_team]["axis"]]], width: "350px", library: { legend: "none" } %></div>
+<div class="six columns"><%= column_chart [ { name: "Kills", data: { "Grenade" => @player[:grenade_kills], "Melee" => @player[:melee_kills], "Teamkill" => @player[:teamkills] } }, { name: "Deaths", data: { "Grenade" => @player[:grenade_deaths], "Melee" => @player[:melee_deaths], "Teamkill" => @player[:teamkilled] } } ], library: { legend: "none" } %></div>
 </div>
 </div>
 <br/>
-<% end %>
+
+<div class="rbox">
+<h4>K/D History</h4>
+<%= line_chart @charts[:kd], discrete: true %>
+</div>
+<br/>
+
+<div class="rbox">
+<h4>Kill ranges</h4>
+<%= area_chart [ { name: "Kills", data: @charts[:range] }, { name: "Headshots", data: @charts[:range_hs] } ], discrete: true, stacked: false, library: { legend: "none", hAxis: { title: "Range (m)" } } %>
+</div>
+<br/>
 
 <div class="row">
 <div class="four columns rbox">

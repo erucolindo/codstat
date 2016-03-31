@@ -1,0 +1,31 @@
+<div class="rbox">
+<h4>Totals</h4>
+<div class="row">
+<div class="six columns"><%= pie_chart @charts[:kills], width: "350px", library: { legend: "none", title: "Kills" } %></div>
+<div class="six columns"><%= pie_chart @charts[:deaths], width: "350px", library: { legend: "none", title: "Deaths" } %></div>
+</div>
+</div>
+<br/>
+
+<div class="rbox">
+<h4>Kill Ranges</h4>
+<%= bar_chart [{ name: "Longest Range", data: @charts[:ranges_long] }, 
+               { name: "Average Range", data: @charts[:ranges_avg] }
+              ], library: { legend: "none", hAxis: { title: "Range (m)" } } %>
+</div>
+<br/>
+
+<div class="rbox">
+<h4>K/D</h4>
+<%= column_chart @charts[:kd] %>
+</div>
+<br/>
+
+<div class="rbox">
+<h4>Headshots</h4>
+<%= column_chart [{ name: "Kills", data: @charts[:headshots] },
+                  { name: "Deaths", data: @charts[:headshoted] }
+                 ], library: { vAxis: { title: "%" } } %>
+</div>
+
+

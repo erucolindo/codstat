@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'export' => 'kills#export'
   get 'weapon/:id' => 'kills#weapon'
   get 'type/:id' => 'kills#type'
-
+  get 'charts' => 'kills#charts'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

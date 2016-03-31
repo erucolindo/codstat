@@ -396,6 +396,9 @@ td.trend-negative {
 th.center {
   text-align: center; }
 
+span {
+  white-space: pre-wrap; }
+
 /* Clearing
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
