@@ -1,37 +1,39 @@
 <h2>Cumquats CoD2 Leaderboards</h2>
 
 <div class="rbox">
-<table class="u-full-width">
-	<thead>
-		<tr>
-			<th><%= link_to "Name", url_for(:sort => 'name') %></th>
-			<th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
-			<th><%= link_to "Deaths", url_for(:sort => 'deaths') %></th>
-			<th><%= link_to "K/D", url_for(:sort => 'kd') %></th>
-			<th><%= link_to "HS", url_for(:sort => 'hs') %></th>
-			<th><%= link_to "KS", url_for(:sort => 'ks') %></th>
-			<th><%= link_to "Max", url_for(:sort => 'range') %></th>
-			<th><%= link_to "Advantage", url_for(:sort => 'adv') %></th>
-			<th><%= link_to "Disadvantage", url_for(:sort => 'dis') %></th>
-			<th><%= link_to "Favorite Weapon", url_for(:sort => 'weapon') %></th>
-		</tr>
-	</thead>
+  <table class="u-full-width">
+    <thead>
+      <tr>
+        <th><%= link_to "Name", url_for(:sort => 'name') %></th>
+        <th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
+        <th><%= link_to "Deaths", url_for(:sort => 'deaths') %></th>
+        <th><%= link_to "K/D", url_for(:sort => 'kd') %></th>
+        <th><%= link_to "HS", url_for(:sort => 'hs') %></th>
+        <th><%= link_to "KS", url_for(:sort => 'ks') %></th>
+        <th><%= link_to "Max", url_for(:sort => 'range') %></th>
+        <th><%= link_to "Advantage", url_for(:sort => 'adv') %></th>
+        <th><%= link_to "Disadvantage", url_for(:sort => 'dis') %></th>
+        <th><%= link_to "Favorite Weapon", url_for(:sort => 'weapon') %></th>
+      </tr>
+    </thead>
 
-	<tbody>
-		<% @players.each do |player| %>
-		<tr>
-			<td><%= link_to pretty_name(player[:name]), controller: "kills", action: "show", id: player[:id] %> <%= player[:debug] %></td>
-			<td><%= number_with_delimiter(player[:kills]) %></td>
-			<td><%= number_with_delimiter(player[:deaths]) %></td>
-			<td class="<%= if player[:kd_trend] then "trend-positive" else "trend-negative" end %>"><%= number_with_precision(player[:kd], precision: 2) %></td>
-			<td class="<%= if player[:headshots_trend] then "trend-positive" else "trend-negative" end %>"><%= number_to_percentage(player[:headshots] * 100, precision: 0) %></td>
-			<td><%= player[:longest_killstreak] %></td>
-			<td><%= player[:longest_kill] %> m</td>
-			<td><%= pretty_name(player[:dominating]) %></td>
-			<td><%= pretty_name(player[:nemesis]) %></td>
-			<td><%= pretty_gun(player[:fav_gun]) %></td>
-		</tr>
-		<% end %>
-	</tbody>
-</table>
+    <tbody>
+      <% @players.each do |player| %>
+      <tr>
+        <td><%= link_to pretty_name(player[:name]), controller: "kills", action: "show", id: player[:id] %>
+          <%= player[:debug] %></td>
+        <td><%= number_with_delimiter(player[:kills]) %></td>
+        <td><%= number_with_delimiter(player[:deaths]) %></td>
+        <td class="<%= if player[:kd_trend] then " trend-positive" else " trend-negative" end %>"><%= number_with_precision(player[:kd], precision: 2) %></td>
+        <td class="<%= if player[:headshots_trend] then " trend-positive" else " trend-negative" end %>"><%= number_to_percentage(player[:headshots] * 100, precision: 0) %></td>
+        <td><%= player[:longest_killstreak] %></td>
+        <td><%= player[:longest_kill] %>
+          m</td>
+        <td><%= pretty_name(player[:dominating]) %></td>
+        <td><%= pretty_name(player[:nemesis]) %></td>
+        <td><%= pretty_gun(player[:fav_gun]) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>

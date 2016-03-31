@@ -3,84 +3,87 @@
 <br/>
 
 <div class="rbox">
-<h4>Kills by weapon</h4>
-<table class="u-full-width">
-	<thead>
-		<tr>
-			<th colspan="3" class="center">Weapon</th>
-			<th colspan="3" class="center">Range</th>
-			<th colspan="3" class="center">Top Fragger</th>
-		</tr>
-		<tr>
-			<th><%= link_to "Name", url_for(:sort => 'name') %></th>
-			<th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
-			<th>%</th>
-			<th>Name</th>
-			<th><%= link_to "Max", url_for(:sort => 'max') %></th>
-			<th><%= link_to "Avg.", url_for(:sort => 'avg') %></th>
-			<th>Name</th>
-			<th><%= link_to "Kills", url_for(:sort => 'fragger') %></th>
-			<th>%</th>
-		</tr>
-	</thead>
+  <h4>Kills by weapon</h4>
+  <table class="u-full-width">
+    <thead>
+      <tr>
+        <th colspan="3" class="center">Weapon</th>
+        <th colspan="3" class="center">Range</th>
+        <th colspan="3" class="center">Top Fragger</th>
+      </tr>
+      <tr>
+        <th><%= link_to "Name", url_for(:sort => 'name') %></th>
+        <th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
+        <th>%</th>
+        <th>Name</th>
+        <th><%= link_to "Max", url_for(:sort => 'max') %></th>
+        <th><%= link_to "Avg.", url_for(:sort => 'avg') %></th>
+        <th>Name</th>
+        <th><%= link_to "Kills", url_for(:sort => 'fragger') %></th>
+        <th>%</th>
+      </tr>
+    </thead>
 
-	<tbody>
-		<% @weapons[:kills].each do |kill| %>
-		<tr>
-			<td><%= link_to pretty_gun(kill[:weapon]), {controller: "kills", action: "weapon", id: kill[:weapon]} %></td>
-			<td><%= kill[:kills] %></td>
-			<td><%= kill[:percentage] %>%</td>
-			<td><%= pretty_name(kill[:longest_name]) %></td>
-			<td><%= kill[:longest_range] %> m</td>
-			<td><%= kill[:average_range] %> m</td>
-			<td><%= pretty_name(kill[:top_fragger_name]) %></td>
-			<td><%= kill[:top_fragger_kills] %></td>
-			<td><%= kill[:top_fragger_percentage] %>%</td>
-		</tr>
-		<% end %>
-	</tbody>
-</table>
+    <tbody>
+      <% @weapons[:kills].each do |kill| %>
+      <tr>
+        <td><%= link_to pretty_gun(kill[:weapon]), {controller: "kills", action: "weapon", id: kill[:weapon]} %></td>
+        <td><%= kill[:kills] %></td>
+        <td><%= kill[:percentage] %>%</td>
+        <td><%= pretty_name(kill[:longest_name]) %></td>
+        <td><%= kill[:longest_range] %>
+          m</td>
+        <td><%= kill[:average_range] %>
+          m</td>
+        <td><%= pretty_name(kill[:top_fragger_name]) %></td>
+        <td><%= kill[:top_fragger_kills] %></td>
+        <td><%= kill[:top_fragger_percentage] %>%</td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <br/>
 
 <div class="rbox">
-<h4>Kills by type</h4>
-<table class="u-full-width">
-	<thead>
-		<tr>
-			<th colspan="3" class="center">Type</th>
-			<th colspan="2" class="center">Range</th>
-			<th colspan="3" class="center">Top Fragger</th>
-		</tr>
-		<tr>
-			<th><%= link_to "Name", url_for(:sort => 'name') %></th>
-			<th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
-			<th>%</th>
-			<th>Name</th>
-			<th><%= link_to "Max", url_for(:sort => 'max') %></th>
-			<th><%= link_to "Avg.", url_for(:sort => 'avg') %></th>
-			<th>Name</th>
-			<th><%= link_to "Kills", url_for(:sort => 'fragger') %></th>
-			<th>%</th>
-		</tr>
-	</thead>
+  <h4>Kills by type</h4>
+  <table class="u-full-width">
+    <thead>
+      <tr>
+        <th colspan="3" class="center">Type</th>
+        <th colspan="2" class="center">Range</th>
+        <th colspan="3" class="center">Top Fragger</th>
+      </tr>
+      <tr>
+        <th><%= link_to "Name", url_for(:sort => 'name') %></th>
+        <th><%= link_to "Kills", url_for(:sort => 'kills') %></th>
+        <th>%</th>
+        <th>Name</th>
+        <th><%= link_to "Max", url_for(:sort => 'max') %></th>
+        <th><%= link_to "Avg.", url_for(:sort => 'avg') %></th>
+        <th>Name</th>
+        <th><%= link_to "Kills", url_for(:sort => 'fragger') %></th>
+        <th>%</th>
+      </tr>
+    </thead>
 
-	<tbody>
-		<% @weapons[:kills_by_type].each do |kill| %>
-		<tr>
-			<td><%= link_to kill[:weapon], {controller: "kills", action: "type", id: kill[:weapon]} %></td>
-			<td><%= kill[:kills] %></td>
-			<td><%= kill[:percentage] %>%</td>
-			<td><%= pretty_name(kill[:longest_name]) %></td>
-			<td><%= kill[:longest_range] %> m</td>
-			<td><%= kill[:average_range] %> m</td>
-			<td><%= pretty_name(kill[:top_fragger_name]) %></td>
-			<td><%= kill[:top_fragger_kills] %></td>
-			<td><%= kill[:top_fragger_percentage] %>%</td>
-		</tr>
-		<% end %>
-	</tbody>
-</table>
+    <tbody>
+      <% @weapons[:kills_by_type].each do |kill| %>
+      <tr>
+        <td><%= link_to kill[:weapon], {controller: "kills", action: "type", id: kill[:weapon]} %></td>
+        <td><%= kill[:kills] %></td>
+        <td><%= kill[:percentage] %>%</td>
+        <td><%= pretty_name(kill[:longest_name]) %></td>
+        <td><%= kill[:longest_range] %>
+          m</td>
+        <td><%= kill[:average_range] %>
+          m</td>
+        <td><%= pretty_name(kill[:top_fragger_name]) %></td>
+        <td><%= kill[:top_fragger_kills] %></td>
+        <td><%= kill[:top_fragger_percentage] %>%</td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
-
