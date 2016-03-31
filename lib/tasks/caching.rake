@@ -1,9 +1,6 @@
 namespace :import do
   desc "Calculating advantage and disadvantage"
   task advantage: :environment do
-    Rails.application.config.ad_trend_len = 30
-    Rails.application.config.ad_trend_file = "db/ad_cache.yml"
-
     players = Hash.new
     Kill.where("attacker_guid != ''").select(:attacker_guid).distinct.each do |attacker|
       id = attacker.attacker_guid
