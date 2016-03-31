@@ -1,7 +1,4 @@
 class KillsController < ApplicationController
-  KD_TREND_LEN = 100
-  HS_TREND_LEN = 50
-  AD_TREND_LEN = 30
 
   def index
     @players = Hash.new
@@ -13,11 +10,11 @@ class KillsController < ApplicationController
       player[:deaths] = Kill.where(target_guid: player[:id]).count
       player[:kd] = (player[:kills].to_f / player[:deaths])
 
-      kd_recent = Kill.where("attacker_guid = ? OR target_guid = ?", player[:id], player[:id]).last(KD_TREND_LEN)
+      kd_recent = Kill.where("attacker_guid = ? OR target_guid = ?", player[:id], player[:id]).last(Rails.application.config.kd_trend_len)
       player[:kd_trend] = (kd_recent.count{ |k| k.attacker_guid == player[:id] }.to_f / kd_recent.count{ |k| k.target_guid == player[:id] }) > player[:kd]
       player[:headshots] = (Kill.where(attacker_guid: player[:id], damage_type: "MOD_HEAD_SHOT").count.to_f / player[:kills])
 
-      hs_recent = Kill.where(attacker_guid: player[:id]).last(HS_TREND_LEN)
+      hs_recent = Kill.where(attacker_guid: player[:id]).last(Rails.application.config.hs_trend_len)
       player[:headshots_trend] = (hs_recent.count{ |k| k.damage_type == "MOD_HEAD_SHOT" }.to_f / hs_recent.count) > player[:headshots]
       player[:fav_gun] = Kill.where(attacker_guid: player[:id]).group(:weapon).count.sort_by{ |k, v| -v }.first[0]
 
@@ -29,33 +26,10 @@ class KillsController < ApplicationController
       @players[player[:id]] = player
     end
 
+    ad_trend = YAML.load_file(Rails.application.config.ad_trend_file)
     @players.each do |player_id, player|
-      killers = Kill.where(target_guid: player[:id]).group(:attacker_guid).count
-      killers.delete(nil)
-      killers.delete(player[:id])
-
-      killers = Hash[killers.collect do |k, v|
-        recent = Kill.where("( attacker_guid = ? AND target_guid = ? ) OR ( attacker_guid = ? AND target_guid = ? )", player[:id], k, k, player[:id]).last(AD_TREND_LEN).count{ |p| p.attacker_guid == k }
-        [k, {
-          :total => (v.to_f / Kill.where(attacker_guid: player[:id], target_guid: k).count),
-          :recent => (recent.to_f / (AD_TREND_LEN - recent))
-        }]
-      end]
-
-      player[:nemesis] = Kill.where(attacker_guid: killers.sort_by{ |key, value| -(value[:recent] - value[:total]) }.first[0]).last.attacker_name
-
-      killed = Kill.where(attacker_guid: player[:id]).group(:target_guid).count
-      killed.delete(player[:id])
-
-      killed = Hash[killed.collect do |k, v| 
-        kills = Kill.where("( attacker_guid = ? AND target_guid = ? ) OR ( attacker_guid = ? AND target_guid = ? )", player[:id], k, k, player[:id]).last(AD_TREND_LEN).count{ |p| p.target_guid == k }
-        [k, {
-          :total => (v.to_f / Kill.where(target_guid: player[:id], attacker_guid: k).count),
-          :recent => (kills.to_f / (AD_TREND_LEN - kills))
-        }]
-      end]
-
-      player[:dominating] = Kill.where(target_guid: killed.sort_by{ |key, value| -(value[:recent] - value[:total]) }.first[0]).last.target_name
+      player[:nemesis] = ad_trend[player_id][:nemesis]
+      player[:dominating] = ad_trend[player_id][:dominating]
     end
 
     @players = @players.values
@@ -111,7 +85,7 @@ class KillsController < ApplicationController
     @player[:longest_range] = Kill.where("attacker_guid = ? AND weapon NOT IN (?)", params[:id], getWeapon("Grenade")).maximum("range")
     @player[:longest_killstreak] = Kill.where(target_guid: params[:id]).maximum("target_killstreak")
     ranges = Kill.where("attacker_guid = ? AND range != '' AND weapon NOT IN (?)", params[:id], getWeapon("Grenade"))
-    ranges.count == 0 ? @player[:average_range] = 'N/A' : @player[:average_range] = ranges.sum("range") / ranges.count 
+    ranges.count == 0 ? @player[:average_range] = 'N/A' : @player[:average_range] = ranges.sum("range") / ranges.count
 
     @player[:killstreaks] = [["Killing Spree", 5, 9], ["Rampage", 10, 14], ["Dominating", 15, 19], ["Unstoppable", 20, 24], ["GODLIKE", 25, 100]].collect{ |k| [k[0], Kill.where("target_guid = ? AND target_killstreak BETWEEN ? AND ?", params[:id], k[1], k[2]).count] }
     @player[:killstreaks].delete_if{ |k| k[1] == 0 }
@@ -128,9 +102,9 @@ class KillsController < ApplicationController
     @player[:killed_by_gun] = Kill.where(target_guid: params[:id]).group(:weapon).count.map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:deaths]) * 100).to_i } }.sort_by{ |gun| -gun[:kills] }
     @player[:killed_by_gun].each{ |kill| kill[:divergence] = kill[:percentage] - ((Kill.where(weapon: kill[:name]).count.to_f / Kill.count) * 100).to_i }
 
-    @player[:killed_with_guntype] = sortWeapons(Kill.where(attacker_guid: params[:id]).group(:weapon).count).map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:kills]) * 100).to_i } }.sort_by{ |gun| -gun[:kills] } 
+    @player[:killed_with_guntype] = sortWeapons(Kill.where(attacker_guid: params[:id]).group(:weapon).count).map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:kills]) * 100).to_i } }.sort_by{ |gun| -gun[:kills] }
     @player[:killed_with_guntype].each{ |kill| kill[:divergence] = kill[:percentage] - ((Kill.where(weapon: getWeapon(kill[:name])).count.to_f / Kill.count) * 100).to_i }
-    @player[:killed_by_guntype] = sortWeapons(Kill.where(target_guid: params[:id]).group(:weapon).count).map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:deaths]) * 100).to_i } }.sort_by{ |gun| -gun[:kills] } 
+    @player[:killed_by_guntype] = sortWeapons(Kill.where(target_guid: params[:id]).group(:weapon).count).map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:deaths]) * 100).to_i } }.sort_by{ |gun| -gun[:kills] }
     @player[:killed_by_guntype].each{ |kill| kill[:divergence] = kill[:percentage] - ((Kill.where(weapon: getWeapon(kill[:name])).count.to_f / Kill.count) * 100).to_i }
 
     @player[:killed_with_damage] = Kill.where(attacker_guid: params[:id]).group(:damage_location).count.map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:kills]) * 100).to_i } }.sort_by{ |damage| -damage[:kills] }
@@ -138,10 +112,10 @@ class KillsController < ApplicationController
     @player[:killed_by_damage] = Kill.where(target_guid: params[:id]).group(:damage_location).count.map{ |k, v| { :name => k, :kills => v, :percentage => ((v.to_f / @player[:deaths]) * 100).to_i } }.sort_by{ |damage| -damage[:kills] }
     @player[:killed_by_damage].each{ |kill| kill[:divergence] = kill[:percentage] - ((Kill.where(damage_location: kill[:name]).count.to_f / Kill.count) * 100).to_i }
 
-    
+
     @charts = Hash.new
     n = (@player[:kills] + @player[:deaths]) - [1000, @player[:kills] + @player[:deaths]].min
-    @charts[:kd] = Kill.where("attacker_guid = ? OR target_guid = ?", params[:id], params[:id]).last(1000).each_slice(KD_TREND_LEN).to_a.collect do |kills| 
+    @charts[:kd] = Kill.where("attacker_guid = ? OR target_guid = ?", params[:id], params[:id]).last(1000).each_slice(Rails.application.config.kd_trend_len).to_a.collect do |kills|
       [n = n + 100, (kills.count{ |k| k.attacker_guid == params[:id].to_i }.to_f / kills.count{ |k| k.target_guid == params[:id].to_i }).round(2)]
     end
 
@@ -277,7 +251,7 @@ class KillsController < ApplicationController
       range = Kill.where("attacker_guid = ? AND weapon NOT IN (?)", id, getWeapon("Grenade")).maximum("range")
       range ? @charts[:ranges_long][name] = range : @charts[:ranges_long][name] = 0
       ranges = Kill.where("attacker_guid = ? AND range != '' AND weapon NOT IN (?)", id, getWeapon("Grenade"))
-      ranges.count == 0 ? @charts[:ranges_avg][name] = 0 : @charts[:ranges_avg][name] = ranges.sum("range") / ranges.count 
+      ranges.count == 0 ? @charts[:ranges_avg][name] = 0 : @charts[:ranges_avg][name] = ranges.sum("range") / ranges.count
       @charts[:kd][name] = (Kill.where(attacker_guid: id).count.to_f / Kill.where(target_guid: id).count).round(2)
       @charts[:headshots][name] = ((Kill.where(attacker_guid: id, damage_type: "MOD_HEAD_SHOT").count.to_f / Kill.where(attacker_guid: id).count) * 100).round(1)
       @charts[:headshoted][name] = ((Kill.where(target_guid: id, damage_type: "MOD_HEAD_SHOT").count.to_f / Kill.where(target_guid: id).count) * 100).round(1)
@@ -292,7 +266,7 @@ class KillsController < ApplicationController
 
 
   def raw
-    @kills = Kill.where("target_guid LIKE ? AND target_id LIKE ? AND target_team LIKE ? AND target_name LIKE ? AND attacker_guid LIKE ? AND attacker_id LIKE ? AND attacker_team LIKE ? AND attacker_name LIKE ? AND weapon LIKE ? AND damage LIKE ? AND damage_type LIKE ? AND damage_location LIKE ?", 
+    @kills = Kill.where("target_guid LIKE ? AND target_id LIKE ? AND target_team LIKE ? AND target_name LIKE ? AND attacker_guid LIKE ? AND attacker_id LIKE ? AND attacker_team LIKE ? AND attacker_name LIKE ? AND weapon LIKE ? AND damage LIKE ? AND damage_type LIKE ? AND damage_location LIKE ?",
       params[:target_guid].presence || "%",
       params[:target_id].presence || "%",
       "%" + (params[:target_team].presence || "") + "%",
@@ -312,7 +286,7 @@ class KillsController < ApplicationController
 
   def export
     @kills = Kill.all
-    
+
     send_data @kills.as_csv
   end
 

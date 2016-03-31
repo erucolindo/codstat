@@ -2,6 +2,7 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 require 'csv'
+require 'yaml'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -23,5 +24,10 @@ module Codstat
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    config.kd_trend_len = 100
+    config.hs_trend_len = 50
+    config.ad_trend_len = 30
+    config.ad_trend_file = 'db/ad_cache.yml'
   end
 end
