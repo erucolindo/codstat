@@ -1,4 +1,4 @@
-namespace :import do
+namespace :caching do
   desc "Calculating advantage and disadvantage"
   task advantage: :environment do
     players = Hash.new
