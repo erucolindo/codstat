@@ -26,4 +26,9 @@ namespace :import do
     Kill.all.each{ |kill| kill.update(damage_location: kill.damage_location.strip) }
   end
 
+  desc "Remove Instagib kills"
+  task instagib: :environment do
+    Kill.all.each{ |kill| if (kill.damage = 10000) then kill.destroy end }
+  end
+
 end
